@@ -29,6 +29,7 @@ export const initialWeddingConfig: WeddingConfig = {
   initials: 'Z & A',
   // Scheduled in November 2026 for a live active countdown
   eventDateTimeISO: '2026-11-20T17:30:00',
+  timeZone: 'Asia/Karachi',
   nikah: {
     title: {
       en: 'The Nikah Ceremony',

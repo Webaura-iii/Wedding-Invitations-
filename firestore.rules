@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isWebauraAdmin() {
+      return request.auth != null
+        && request.auth.token.get('webauraAdmin', false) == true;
+    }
+
+    // Public guests can read published invitations only.
+    // Writes are reserved for authenticated Webaura staff with a trusted custom claim.
+    match /invitations/{slug} {
+      allow get: if resource.data.status == 'published'
+        || (isWebauraAdmin() && resource.data.ownerUid == request.auth.uid);
+
+      allow list: if isWebauraAdmin()
+        && resource.data.ownerUid == request.auth.uid;
+
+      allow create: if isWebauraAdmin()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.slug == slug
+        && request.resource.data.status in ['draft', 'published']
+        && request.resource.data.keys().hasAll([
+          'ownerUid', 'slug', 'status', 'groom', 'bride',
+          'nameOrder', 'initials', 'eventDateTimeISO', 'timeZone',
+          'nikah', 'createdAt', 'updatedAt'
+        ]);
+
+      allow update: if isWebauraAdmin()
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.slug == slug
+        && request.resource.data.status in ['draft', 'published', 'archived'];
+
+      allow delete: if isWebauraAdmin()
+        && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // Deny all unspecified collections by default.
+  }
+}

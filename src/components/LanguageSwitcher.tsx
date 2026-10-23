@@ -15,7 +15,6 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   const languages: { code: Language; label: string; fontClass: string }[] = [
     { code: 'en', label: 'English', fontClass: 'font-sans' },
     { code: 'ur', label: 'اردو', fontClass: 'font-urdu' },
-    { code: 'ar', label: 'العربية', fontClass: 'font-amiri' },
   ];
 
   return (

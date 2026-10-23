@@ -86,3 +86,29 @@ Edit `src/config/weddingConfig.ts` to customize:
 - `eventDateTimeISO` (the ceremony timestamp for the live countdown)
 - `nikah` details (venue, address, time, and map query)
 - `dressCode` text
+
+
+---
+
+## Webaura multi-client productization status
+
+This repository currently contains the invitation **template and guest experience**. It is not yet a complete multi-client product: wedding data is currently initialized from `src/config/weddingConfig.ts`, and the preview customizer stores edits in the current browser's `localStorage`. Those edits do not automatically sync to guests or other devices.
+
+Productization docs and starter Firebase configuration:
+
+- [Productization plan](docs/PRODUCTIZATION_PLAN.md)
+- [Client onboarding checklist](docs/CLIENT_ONBOARDING_CHECKLIST.md)
+- [Starter Firestore security rules](firestore.rules)
+- [Firebase Emulator/rules configuration](firebase.json)
+
+### Before production use
+
+1. Do not publish the sample couple/venue as a real invitation.
+2. Implement Firebase-backed slug loading and an authenticated Webaura operator workspace (planned Phase 2/3 in the productization plan).
+3. Test the Firestore rules with the Firebase Emulator Suite; the starter rules have not yet been emulator-tested.
+4. Run `npm run build` and `npm run lint`, then test the deployed guest link from a second device.
+5. Keep Firebase Admin credentials and private keys out of frontend code and Vite environment variables.
+
+Published invitation links now support a slug lookup (`/your-slug` or `?invite=your-slug`) through the Firebase web SDK. Configure the `VITE_FIREBASE_*` values from `.env.example` and create `invitations/{slug}` documents matching the documented schema with `status: 'published'`. Unknown/unpublished slugs show a dedicated unavailable state rather than falling back to sample couple details. The editor is hidden on slug URLs.
+
+The authenticated Webaura operator workspace, invitation creation/publishing workflow, production security review, Firestore emulator tests, and live deployment are still outstanding. The current rules are a starter and have not yet been emulator-tested. Do not treat the app as a complete production SaaS until the remaining work is done.

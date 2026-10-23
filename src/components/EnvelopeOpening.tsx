@@ -10,7 +10,6 @@ interface EnvelopeOpeningProps {
   currentLanguage: Language;
   onLanguageChange: (lang: Language) => void;
   onOpenComplete: () => void;
-  soundControl?: React.ReactNode;
 }
 
 export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
@@ -18,7 +17,6 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
   currentLanguage,
   onLanguageChange,
   onOpenComplete,
-  soundControl,
 }) => {
   const [animationStage, setAnimationStage] = useState<'sealed' | 'cracking' | 'openingFlap' | 'slidingCard' | 'opened'>('sealed');
 
@@ -27,6 +25,9 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
 
   const handleOpenEnvelope = () => {
     if (animationStage !== 'sealed') return;
+
+    // Start music directly from the opening gesture to comply with browser autoplay policies.
+    window.dispatchEvent(new Event('wedding-invite-open'));
 
     // Stage 1: Wax cracks with press
     setAnimationStage('cracking');
@@ -54,7 +55,7 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
   return (
     <section 
       aria-label="Invitation Envelope"
-      className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center px-3 sm:px-6 py-6 select-none overflow-hidden"
+      className="relative h-[100dvh] min-h-[100svh] w-screen flex flex-col items-center justify-center p-0 select-none overflow-hidden"
     >
       {/* Background with user's warm marble and rose setting */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
@@ -71,30 +72,21 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
       {/* Floating Warm Golden Bokeh Lights matching reference */}
       <BokehLights />
 
-      {/* Top utility row: Language Switcher and Sound Control */}
-      <header className="fixed top-3 sm:top-4 end-3 sm:end-4 z-40 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        <LanguageSwitcher
-          currentLanguage={currentLanguage}
-          onLanguageChange={onLanguageChange}
-        />
-        {soundControl}
-      </header>
-
       {/* Main Envelope Scene Canvas */}
-      <main className="relative z-20 flex flex-col items-center justify-center w-full max-w-lg mx-auto">
+      <main className="absolute inset-0 z-20 flex flex-col items-center justify-center w-full h-full max-w-none mx-auto">
         
         {/* Envelope Container with 3D Perspective - Mobile-First Proportional Scaling */}
-        <div className="relative w-full max-w-[340px] xs:max-w-[370px] sm:max-w-[450px] md:max-w-[480px] aspect-[1.5/1] perspective-1500 mx-auto">
+        <div className="absolute inset-0 w-full h-full max-w-none aspect-auto perspective-1500 mx-auto">
           
           {/* Realistic soft drop shadow beneath the envelope on the marble table */}
-          <div className="absolute -bottom-5 sm:-bottom-7 left-4 right-4 sm:left-6 sm:right-6 h-8 sm:h-12 bg-[#2D2115]/20 rounded-[50%] blur-lg sm:blur-xl pointer-events-none" />
+          <div className="absolute inset-0 bg-[#2D2115]/[0.04] pointer-events-none" />
 
           {/* Envelope Main Body */}
-          <div className="absolute inset-0 bg-[#FDFBF7] border border-[#E7DECf] rounded-lg shadow-2xl overflow-visible">
+          <div className="absolute inset-0 bg-[#FDFBF7] border-0 rounded-none shadow-none overflow-visible">
             
             {/* Fine cotton paper texture */}
             <div 
-              className="absolute inset-0 opacity-40 pointer-events-none rounded-lg"
+              className="absolute inset-0 opacity-40 pointer-events-none rounded-none"
               style={{
                 backgroundImage: 'radial-gradient(#CBB99E 0.6px, transparent 0.6px)',
                 backgroundSize: '14px 14px',
@@ -102,7 +94,7 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
             />
 
             {/* Internal Pocket / Card Back Lining */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#F2ECE0] to-[#E5DAC6] rounded-lg shadow-inner" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#F2ECE0] to-[#E5DAC6] rounded-none shadow-inner" />
 
             {/* Sliding Invitation Card Preview inside envelope pocket */}
             <div
@@ -264,7 +256,7 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
 
         {/* Romantic instruction banner beneath envelope */}
         <div 
-          className={`mt-6 sm:mt-10 text-center transition-all duration-500 max-w-sm px-4 ${
+          className={`absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 w-[min(90vw,32rem)] text-center transition-all duration-500 px-4 z-40 ${
             isRTL ? 'font-urdu' : 'font-cormorant'
           }`}
           dir={isRTL ? 'rtl' : 'ltr'}
