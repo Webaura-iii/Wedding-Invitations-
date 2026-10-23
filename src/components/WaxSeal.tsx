@@ -71,10 +71,24 @@ export const WaxSeal: React.FC<WaxSealProps> = ({
             </linearGradient>
           </defs>
           {/* Organic wavy scalloped melted wax edge matching the photo */}
+          <defs>
+            <clipPath id="waxSealLeftClip"><rect x="0" y="0" width="50" height="100" /></clipPath>
+            <clipPath id="waxSealRightClip"><rect x="50" y="0" width="50" height="100" /></clipPath>
+          </defs>
           <path
+            className={cracked ? 'wax-seal-left-half' : ''}
             d="M 50,4 C 65,3 78,11 87,22 C 95,33 97,48 94,62 C 91,76 81,89 67,95 C 53,101 37,97 25,89 C 13,81 5,68 4,53 C 3,38 12,23 24,13 C 33,6 41,5 50,4 Z"
             fill="url(#goldWaxGradient)"
+            clipPath="url(#waxSealLeftClip)"
           />
+          {cracked && (
+            <path
+              className="wax-seal-right-half"
+              d="M 50,4 C 65,3 78,11 87,22 C 95,33 97,48 94,62 C 91,76 81,89 67,95 C 53,101 37,97 25,89 C 13,81 5,68 4,53 C 3,38 12,23 24,13 C 33,6 41,5 50,4 Z"
+              fill="url(#goldWaxGradient)"
+              clipPath="url(#waxSealRightClip)"
+            />
+          )}
         </svg>
 
         {/* Inner circular embossed coin face */}
