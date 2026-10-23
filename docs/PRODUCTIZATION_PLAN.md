@@ -74,16 +74,22 @@ A starter rules file is provided in `firestore.rules`. Review it against the fin
 
 ## Phased delivery
 
-### Phase 1 — Product foundation (this branch)
+### Phase 1 — Product foundation (implemented on this branch)
 - Document the product model, client onboarding checklist, data contract, security boundaries, and launch gates.
 - Preserve the current invitation template and its visual identity.
-- Identify demo-only functionality so it is not mistaken for a real client dashboard.
+- Add starter Firestore rules and emulator configuration; testing/review remains required.
 
-### Phase 2 — Firebase-backed invitation loading
-- Add Firebase web SDK and validated environment configuration.
-- Load published invitations by slug; show a graceful not-found/unpublished state.
-- Separate invitation content from UI components and localize every client-editable field.
-- Keep a local demo fixture for development, but never silently show sample couple details for an unknown production slug.
+### Phase 2 — Public invitation loading (initial implementation on this branch)
+- Add Firebase web SDK and environment-variable configuration.
+- Load a published invitation by a URL slug (`/slug` or `?invite=slug`).
+- Show loading and unavailable states; unknown or unpublished slugs do not silently show sample couple details.
+- Hide the local preview customizer on slug URLs and scope local preview storage by slug.
+- Remaining: validate the complete localized document schema, test all loading states, and verify the flow against a real Firebase project.
+
+### Phase 2b — Reliable content contract
+- Validate all localized fields and date/timezone values before rendering.
+- Ensure every editable field has English, Urdu, and Arabic content.
+- Keep a local demo fixture for development only.
 
 ### Phase 3 — Webaura operator workspace
 - Firebase Authentication for staff.
