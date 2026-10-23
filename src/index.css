@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+    --font-playfair: 'Playfair Display', Georgia, serif;
+    --font-amiri: 'Amiri', 'Traditional Arabic', serif;
+    --font-urdu: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+    --font-lora: 'Lora', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant);
+}
+
+.font-playfair {
+  font-family: var(--font-playfair);
+}
+
+.font-amiri {
+  font-family: var(--font-amiri);
+  line-height: 1.8;
+}
+
+.font-urdu {
+  font-family: var(--font-urdu);
+  line-height: 2.2;
+  word-spacing: 2px;
+}
+
+.font-lora {
+  font-family: var(--font-lora);
+}
+
+/* Perspective utilities for 3D envelope */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Subtle gold foil border and text effects */
+.gold-foil-text {
+  background: linear-gradient(135deg, #A8894E 0%, #D4BC8B 35%, #C2A56C 65%, #8C6D32 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-foil-border {
+  border-image: linear-gradient(135deg, #C2A56C, #E8DFD2, #C2A56C) 1;
+}
+
+/* Wax seal realistic styling */
+.wax-seal-shadow {
+  box-shadow: 
+    0 10px 25px -5px rgba(140, 109, 50, 0.45),
+    0 4px 10px -2px rgba(90, 65, 20, 0.35),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 6px rgba(60, 40, 10, 0.5);
+}
+
+.wax-seal-emboss {
+  text-shadow: 
+    1px 1px 1px rgba(255, 255, 255, 0.5),
+    -1px -1px 2px rgba(90, 60, 15, 0.7);
+}
+
+/* Gentle curtain drift */
+@keyframes curtainBreezeLeft {
+  0%, 100% {
+    transform: rotate(0deg) skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(1.2deg) skewY(0.6deg) scaleX(1.02);
+  }
+}
+
+@keyframes curtainBreezeRight {
+  0%, 100% {
+    transform: rotate(0deg) skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(-1.2deg) skewY(-0.6deg) scaleX(1.02);
+  }
+}
+
+.animate-curtain-left {
+  animation: curtainBreezeLeft 9s ease-in-out infinite;
+}
+
+.animate-curtain-right {
+  animation: curtainBreezeRight 10s ease-in-out infinite;
+}
+
+/* Envelope flap rotation */
+.flap-open {
+  transform: rotateX(180deg);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-curtain-left,
+  .animate-curtain-right {
+    animation: none !important;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Luxury Muslim Wedding Invitation",
+  "description": "An interactive luxury Muslim wedding invitation experience featuring an opening wax-sealed envelope, delicate white roses, flowing silk curtains, and multilingual English, Urdu, and Arabic support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
