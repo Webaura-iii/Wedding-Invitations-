@@ -29,7 +29,7 @@ export const PetalCanvas: React.FC<{ active?: boolean }> = ({ active = true }) =
       return;
     }
 
-    // Keep restrained count (12 petals) so it's a gentle natural drift, not a snowfall
+    // A restrained count of soft baby-pink petals for a gentle, romantic drift.
     const generated: Petal[] = Array.from({ length: 12 }, (_, i) => ({
       id: i,
       left: Math.random() * 96 + 2,
@@ -75,9 +75,9 @@ export const PetalCanvas: React.FC<{ active?: boolean }> = ({ active = true }) =
           >
             <defs>
               <linearGradient id={`petalGrad-${petal.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="60%" stopColor="#FAF8F4" />
-                <stop offset="100%" stopColor="#EFE8DD" />
+                <stop offset="0%" stopColor="#FFF0F5" />
+                <stop offset="60%" stopColor="#F8C8DC" />
+                <stop offset="100%" stopColor="#F2AFCB" />
               </linearGradient>
             </defs>
             <path
