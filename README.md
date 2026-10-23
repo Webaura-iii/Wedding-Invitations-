@@ -109,4 +109,6 @@ Productization docs and starter Firebase configuration:
 4. Run `npm run build` and `npm run lint`, then test the deployed guest link from a second device.
 5. Keep Firebase Admin credentials and private keys out of frontend code and Vite environment variables.
 
-The presence of `firebase.json` and `firestore.rules` does not by itself connect the React app to Firebase or make the editor secure. Treat the rules as a starting point that must be tested and reviewed before production.
+Published invitation links now support a slug lookup (`/your-slug` or `?invite=your-slug`) through the Firebase web SDK. Configure the `VITE_FIREBASE_*` values from `.env.example` and create `invitations/{slug}` documents matching the documented schema with `status: 'published'`. Unknown/unpublished slugs show a dedicated unavailable state rather than falling back to sample couple details. The editor is hidden on slug URLs.
+
+The authenticated Webaura operator workspace, invitation creation/publishing workflow, production security review, Firestore emulator tests, and live deployment are still outstanding. The current rules are a starter and have not yet been emulator-tested. Do not treat the app as a complete production SaaS until the remaining work is done.
