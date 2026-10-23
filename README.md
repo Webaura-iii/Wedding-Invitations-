@@ -86,3 +86,27 @@ Edit `src/config/weddingConfig.ts` to customize:
 - `eventDateTimeISO` (the ceremony timestamp for the live countdown)
 - `nikah` details (venue, address, time, and map query)
 - `dressCode` text
+
+
+---
+
+## Webaura multi-client productization status
+
+This repository currently contains the invitation **template and guest experience**. It is not yet a complete multi-client product: wedding data is currently initialized from `src/config/weddingConfig.ts`, and the preview customizer stores edits in the current browser's `localStorage`. Those edits do not automatically sync to guests or other devices.
+
+Productization docs and starter Firebase configuration:
+
+- [Productization plan](docs/PRODUCTIZATION_PLAN.md)
+- [Client onboarding checklist](docs/CLIENT_ONBOARDING_CHECKLIST.md)
+- [Starter Firestore security rules](firestore.rules)
+- [Firebase Emulator/rules configuration](firebase.json)
+
+### Before production use
+
+1. Do not publish the sample couple/venue as a real invitation.
+2. Implement Firebase-backed slug loading and an authenticated Webaura operator workspace (planned Phase 2/3 in the productization plan).
+3. Test the Firestore rules with the Firebase Emulator Suite; the starter rules have not yet been emulator-tested.
+4. Run `npm run build` and `npm run lint`, then test the deployed guest link from a second device.
+5. Keep Firebase Admin credentials and private keys out of frontend code and Vite environment variables.
+
+The presence of `firebase.json` and `firestore.rules` does not by itself connect the React app to Firebase or make the editor secure. Treat the rules as a starting point that must be tested and reviewed before production.
