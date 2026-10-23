@@ -10,7 +10,6 @@ import { EnvelopeOpening } from './components/EnvelopeOpening';
 import { InvitationCard } from './components/InvitationCard';
 import { WeddingDetails } from './components/WeddingDetails';
 import { WeddingCountdown } from './components/WeddingCountdown';
-import { WeddingCalendar } from './components/WeddingCalendar';
 import { ClosingSection } from './components/ClosingSection';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { AudioAmbient } from './components/AudioAmbient';
@@ -104,11 +103,6 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const coupleTitle =
-    config.nameOrder === 'groom_first'
-      ? `${config.groom.name[currentLanguage]} & ${config.bride.name[currentLanguage]}`
-      : `${config.bride.name[currentLanguage]} & ${config.groom.name[currentLanguage]}`;
-
   if (invitationSlug && isLoadingInvitation) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#FAF8F4] px-6 text-center">
@@ -151,7 +145,6 @@ export default function App() {
         ) : (
           /* Opened Main Wedding Experience */
           <div className="relative min-h-screen flex flex-col items-center">
-            
             {/* Clean floating language selection (no nav bar) */}
             <div className="fixed top-3 end-3 sm:top-4 sm:end-4 z-40 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
               <LanguageSwitcher
@@ -163,20 +156,13 @@ export default function App() {
 
             {/* Scrollable Content Stack */}
             <main className="w-full flex flex-col items-center pt-6 pb-12">
-              
-              {/* Main Stationery Card */}
+              {/* Main Stationery Card (includes the save-the-date calendar at its bottom) */}
               <div id="invitation-card" className="w-full pt-4">
                 <InvitationCard
                   config={config}
                   currentLanguage={currentLanguage}
                 />
               </div>
-
-              {/* Save the Date Month Calendar with Heart Mark */}
-              <WeddingCalendar
-                targetDateISO={config.eventDateTimeISO}
-                currentLanguage={currentLanguage}
-              />
 
               {/* Countdown Timer */}
               <WeddingCountdown
