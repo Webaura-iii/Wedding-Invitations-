@@ -10,7 +10,6 @@ interface EnvelopeOpeningProps {
   currentLanguage: Language;
   onLanguageChange: (lang: Language) => void;
   onOpenComplete: () => void;
-  soundControl?: React.ReactNode;
 }
 
 export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
@@ -18,7 +17,6 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
   currentLanguage,
   onLanguageChange,
   onOpenComplete,
-  soundControl,
 }) => {
   const [animationStage, setAnimationStage] = useState<'sealed' | 'cracking' | 'openingFlap' | 'slidingCard' | 'opened'>('sealed');
 
@@ -27,6 +25,9 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
 
   const handleOpenEnvelope = () => {
     if (animationStage !== 'sealed') return;
+
+    // Start music directly from the opening gesture to comply with browser autoplay policies.
+    window.dispatchEvent(new Event('wedding-invite-open'));
 
     // Stage 1: Wax cracks with press
     setAnimationStage('cracking');
@@ -70,15 +71,6 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
 
       {/* Floating Warm Golden Bokeh Lights matching reference */}
       <BokehLights />
-
-      {/* Top utility row: Language Switcher and Sound Control */}
-      <header className="fixed top-3 sm:top-4 end-3 sm:end-4 z-40 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        <LanguageSwitcher
-          currentLanguage={currentLanguage}
-          onLanguageChange={onLanguageChange}
-        />
-        {soundControl}
-      </header>
 
       {/* Main Envelope Scene Canvas */}
       <main className="relative z-20 flex flex-col items-center justify-center w-full max-w-lg mx-auto">
