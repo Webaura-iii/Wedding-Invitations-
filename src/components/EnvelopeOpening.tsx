@@ -19,7 +19,7 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
   onLanguageChange,
   onOpenComplete,
 }) => {
-  const [animationStage, setAnimationStage] = useState<'sealed' | 'cracking' | 'openingFlap' | 'slidingCard' | 'opened'>('sealed');
+  const [animationStage, setAnimationStage] = useState<'sealed' | 'cracking' | 'openingRight' | 'openingLeft' | 'openingFlap' | 'slidingCard' | 'opened'>('sealed');
 
   const t = translations[currentLanguage];
   const isRTL = currentLanguage === 'ur';
@@ -28,15 +28,20 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
     if (animationStage !== 'sealed') return;
     window.dispatchEvent(new Event('wedding-invite-open'));
     setAnimationStage('cracking');
-    setTimeout(() => setAnimationStage('openingFlap'), 450);
-    setTimeout(() => setAnimationStage('slidingCard'), 1100);
+    // Release the seal, open the right door, then the left door, before revealing the card.
+    setTimeout(() => setAnimationStage('openingRight'), 360);
+    setTimeout(() => setAnimationStage('openingLeft'), 760);
+    setTimeout(() => setAnimationStage('openingFlap'), 1120);
+    setTimeout(() => setAnimationStage('slidingCard'), 1540);
     setTimeout(() => {
       setAnimationStage('opened');
       onOpenComplete();
-    }, 2300);
+    }, 2500);
   };
 
   const isFlapOpen = animationStage === 'openingFlap' || animationStage === 'slidingCard' || animationStage === 'opened';
+  const isRightDoorOpen = animationStage === 'openingRight' || animationStage === 'openingLeft' || isFlapOpen;
+  const isLeftDoorOpen = animationStage === 'openingLeft' || isFlapOpen;
   const isCardSliding = animationStage === 'slidingCard' || animationStage === 'opened';
 
   const paperTextureStyle: React.CSSProperties = {
@@ -116,8 +121,8 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
                   <stop offset="100%" stopColor="#E8DDC9" />
                 </linearGradient>
               </defs>
-              <polygon points="0,0 250,170 0,330" fill="url(#sideFlapLeftMobile)" stroke="#D8CEBD" strokeWidth="0.75" />
-              <polygon points="500,0 250,170 500,330" fill="url(#sideFlapRightMobile)" stroke="#D8CEBD" strokeWidth="0.75" />
+              <polygon className={`envelope-side-door envelope-side-door-left ${isLeftDoorOpen ? 'door-open' : ''}`} points="0,0 250,170 0,330" fill="url(#sideFlapLeftMobile)" stroke="#D8CEBD" strokeWidth="0.75" />
+              <polygon className={`envelope-side-door envelope-side-door-right ${isRightDoorOpen ? 'door-open' : ''}`} points="500,0 250,170 500,330" fill="url(#sideFlapRightMobile)" stroke="#D8CEBD" strokeWidth="0.75" />
               <path d="M 0,330 L 250,165 L 500,330 Z" fill="url(#pocketGradMobile)" stroke="#D3C7B3" strokeWidth="0.75" />
             </svg>
 
