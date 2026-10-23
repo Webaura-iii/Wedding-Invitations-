@@ -12,47 +12,85 @@ export const WeddingDetails: React.FC<WeddingDetailsProps> = ({ config, currentL
   const t = translations[currentLanguage];
   const isRTL = currentLanguage === 'ur' || currentLanguage === 'ar';
 
-  // Helper to generate and download an .ics file
+  // Generate an iCalendar event using the wedding's configured time zone.
   const handleAddToCalendar = (event: CeremonyEvent, startIso: string) => {
-    const startDate = new Date(startIso);
-    // 3 hours duration default
-    const endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
+    const timeZone = config.timeZone || 'UTC';
 
-    const formatDateForIcs = (date: Date) => {
-      return date.toISOString().replace(/-|:|\.\d+/g, '');
+    const wallClockParts = (value: string) => {
+      // A timezone-less ISO value is treated as the event's local wall-clock time.
+      const localMatch = value.match(/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})(?::(\\d{2}))?$/);
+      if (localMatch) {
+        return {
+          year: Number(localMatch[1]), month: Number(localMatch[2]), day: Number(localMatch[3]),
+          hour: Number(localMatch[4]), minute: Number(localMatch[5]), second: Number(localMatch[6] || 0),
+        };
+      }
+
+      const instant = new Date(value);
+      if (Number.isNaN(instant.getTime())) throw new Error('Invalid wedding date/time');
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+      }).formatToParts(instant);
+      const part = (type: string) => Number(parts.find((item) => item.type === type)?.value);
+      return { year: part('year'), month: part('month'), day: part('day'), hour: part('hour'), minute: part('minute'), second: part('second') };
     };
+
+    const formatIcsDateTime = (parts: ReturnType<typeof wallClockParts>) =>
+      String(parts.year).padStart(4, '0') +
+      String(parts.month).padStart(2, '0') +
+      String(parts.day).padStart(2, '0') + 'T' +
+      String(parts.hour).padStart(2, '0') +
+      String(parts.minute).padStart(2, '0') +
+      String(parts.second).padStart(2, '0');
+
+    const startParts = wallClockParts(startIso);
+    const endDate = new Date(Date.UTC(
+      startParts.year, startParts.month - 1, startParts.day,
+      startParts.hour + 3, startParts.minute, startParts.second,
+    ));
+    const endParts = {
+      year: endDate.getUTCFullYear(), month: endDate.getUTCMonth() + 1, day: endDate.getUTCDate(),
+      hour: endDate.getUTCHours(), minute: endDate.getUTCMinutes(), second: endDate.getUTCSeconds(),
+    };
+    const escapeIcsText = (value: string) => value
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\\r?\\n/g, '\\n');
 
     const coupleTitle = `${config.groom.name.en} & ${config.bride.name.en}'s ${event.title.en}`;
     const venueFull = `${event.venueName.en}, ${event.venueAddress.en}, ${event.cityCountry.en}`;
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\\.\\d{3}Z$/, 'Z');
 
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//Luxury Muslim Wedding Invitation//EN',
+      'PRODID:-//Webaura//Wedding Invitation//EN',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       'BEGIN:VEVENT',
-      `UID:${Date.now()}@weddinginvitation.internal`,
-      `DTSTAMP:${formatDateForIcs(new Date())}`,
-      `DTSTART:${formatDateForIcs(startDate)}`,
-      `DTEND:${formatDateForIcs(endDate)}`,
-      `SUMMARY:${coupleTitle}`,
-      `DESCRIPTION:With the blessings of Allah, please join us to celebrate the Nikah and wedding festivities.`,
-      `LOCATION:${venueFull}`,
+      `UID:${Date.now()}@weddinginvitation.webaura`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;TZID=${timeZone}:${formatIcsDateTime(startParts)}`,
+      `DTEND;TZID=${timeZone}:${formatIcsDateTime(endParts)}`,
+      `SUMMARY:${escapeIcsText(coupleTitle)}`,
+      `DESCRIPTION:${escapeIcsText('With the blessings of Allah, please join us to celebrate the Nikah and wedding festivities.')}`,
+      `LOCATION:${escapeIcsText(venueFull)}`,
       'STATUS:CONFIRMED',
       'END:VEVENT',
       'END:VCALENDAR',
-    ].join('\r\n');
+    ].join('\\r\\n');
 
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Wedding-${event.title.en.replace(/\s+/g, '-')}.ics`);
+    link.setAttribute('download', `Wedding-${event.title.en.replace(/\\s+/g, '-')}.ics`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const handleOpenMap = (query: string) => {
