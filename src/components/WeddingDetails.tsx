@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, Sparkles } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import { CeremonyEvent, Language, WeddingConfig } from '../types/wedding';
 import { translations } from '../translations/translations';
 
@@ -192,20 +192,6 @@ export const WeddingDetails: React.FC<WeddingDetailsProps> = ({ config, currentL
         </div>
       </div>
 
-      {/* Dress Code Strip (if provided) */}
-      {config.dressCode && (
-        <div className="mt-8 bg-white/70 backdrop-blur-sm border border-[#E8DFD2] rounded-lg p-4 sm:p-5 text-center max-w-xl mx-auto shadow-xs">
-          <div className="flex items-center justify-center gap-2 text-xs uppercase tracking-wider text-[#B3935B] font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-[#C9AE7A]" />
-            <span>{t.dressCodeLabel}</span>
-          </div>
-          <p className={`text-sm text-[#59604C] mt-1 ${
-            currentLanguage === 'ur' ? 'font-urdu' : currentLanguage === 'ar' ? 'font-amiri text-base' : 'font-cormorant text-base'
-          }`}>
-            {config.dressCode[currentLanguage]}
-          </p>
-        </div>
-      )}
     </section>
   );
 };
