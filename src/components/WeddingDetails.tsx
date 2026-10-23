@@ -18,7 +18,7 @@ export const WeddingDetails: React.FC<WeddingDetailsProps> = ({ config, currentL
 
     const wallClockParts = (value: string) => {
       // A timezone-less ISO value is treated as the event's local wall-clock time.
-      const localMatch = value.match(/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})(?::(\\d{2}))?$/);
+      const localMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
       if (localMatch) {
         return {
           year: Number(localMatch[1]), month: Number(localMatch[2]), day: Number(localMatch[3]),
@@ -57,11 +57,11 @@ export const WeddingDetails: React.FC<WeddingDetailsProps> = ({ config, currentL
       .replace(/\\/g, '\\\\')
       .replace(/;/g, '\\;')
       .replace(/,/g, '\\,')
-      .replace(/\\r?\\n/g, '\\n');
+      .replace(/\r?\n/g, '\\n');
 
     const coupleTitle = `${config.groom.name.en} & ${config.bride.name.en}'s ${event.title.en}`;
     const venueFull = `${event.venueName.en}, ${event.venueAddress.en}, ${event.cityCountry.en}`;
-    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\\.\\d{3}Z$/, 'Z');
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 
     const icsContent = [
       'BEGIN:VCALENDAR',
@@ -80,13 +80,13 @@ export const WeddingDetails: React.FC<WeddingDetailsProps> = ({ config, currentL
       'STATUS:CONFIRMED',
       'END:VEVENT',
       'END:VCALENDAR',
-    ].join('\\r\\n');
+    ].join('\r\n');
 
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Wedding-${event.title.en.replace(/\\s+/g, '-')}.ics`);
+    link.setAttribute('download', `Wedding-${event.title.en.replace(/\s+/g, '-')}.ics`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
