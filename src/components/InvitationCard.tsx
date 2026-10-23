@@ -1,6 +1,7 @@
 import React from 'react';
 import { Language, WeddingConfig } from '../types/wedding';
 import { translations } from '../translations/translations';
+import { WeddingCalendar } from './WeddingCalendar';
 
 interface InvitationCardProps {
   config: WeddingConfig;
@@ -107,7 +108,6 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({ config, currentL
 
         {/* The Couple's Names - Mobile-First Large Editorial Typography */}
         <div className="w-full py-1 sm:py-2 space-y-2 sm:space-y-4">
-          {/* First Name & Parents */}
           <div className="space-y-0.5 sm:space-y-1">
             <h1 className={`text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-[#35332F] font-semibold tracking-wide break-words ${
               currentLanguage === 'ur' ? 'font-urdu py-1' : currentLanguage === 'ar' ? 'font-amiri font-bold' : 'font-playfair'
@@ -123,7 +123,6 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({ config, currentL
             )}
           </div>
 
-          {/* Ornamental Ampersand / Divider */}
           <div className="flex items-center justify-center gap-2 sm:gap-3 py-0.5">
             <div className="h-[1px] w-8 sm:w-14 bg-[#C9AE7A]/50" />
             <span className={`text-[#B3935B] text-lg sm:text-2xl font-serif italic px-1.5 ${
@@ -134,7 +133,6 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({ config, currentL
             <div className="h-[1px] w-8 sm:w-14 bg-[#C9AE7A]/50" />
           </div>
 
-          {/* Second Name & Parents */}
           <div className="space-y-0.5 sm:space-y-1">
             <h1 className={`text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-[#35332F] font-semibold tracking-wide break-words ${
               currentLanguage === 'ur' ? 'font-urdu py-1' : currentLanguage === 'ar' ? 'font-amiri font-bold' : 'font-playfair'
@@ -167,6 +165,13 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({ config, currentL
           </div>
         </div>
 
+        {/* Save-the-date calendar sits at the very bottom of the invitation card */}
+        <div className="w-full pt-2 sm:pt-4">
+          <WeddingCalendar
+            targetDateISO={config.eventDateTimeISO}
+            currentLanguage={currentLanguage}
+          />
+        </div>
       </div>
     </article>
   );
