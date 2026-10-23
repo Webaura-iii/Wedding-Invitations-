@@ -63,14 +63,14 @@ interface InvitationRecord {
 
 ## Security model (non-negotiable)
 
-- Every write must be authenticated and restricted to the invitation owner or an explicitly authorized Webaura operator.
+- Every write must be authenticated and restricted to a Webaura staff account carrying the trusted Firebase custom claim `webauraAdmin: true`; never allow arbitrary authenticated users to self-publish.
 - Public guests may read **published** invitation documents only; guests must never read drafts, owner profiles, billing records, or other invitations.
 - Never trust a client-supplied `ownerUid`, role, status, or slug uniqueness check. Validate ownership and allowed fields in Firestore rules and trusted server-side code.
 - Do not ship Firebase Admin SDK credentials in Vite variables or browser bundles. Only Firebase web configuration belongs in client environment variables; Firestore rules remain the authorization boundary.
 - Rate-limit or otherwise protect invitation creation and publishing through trusted server code before accepting public self-service.
 - Avoid collecting guest data or RSVP information until its retention, consent, and access model is defined.
 
-A starter rules file is provided in `firestore.rules`. Review it against the final collection layout before enabling production data. Security rules should be tested with the Firebase Emulator Suite before launch.
+The starter rules in `firestore.rules` allow public reads only for published invitations and require the trusted `webauraAdmin: true` custom claim for writes. Configure that claim only from a trusted server/Admin SDK, never from the client. Review the rules against the final collection layout and test them with the Firebase Emulator Suite before launch.
 
 ## Phased delivery
 
@@ -121,4 +121,4 @@ A starter rules file is provided in `firestore.rules`. Review it against the fin
 
 The current app initializes from `initialWeddingConfig` and stores customizations in browser `localStorage`. That is suitable for a single-device demo, but not for sharing a client's edits with guests. The floating customizer is a preview tool, not authentication-protected administration. These must be replaced or explicitly disabled for production guest links during Phase 2/3.
 
-The current calendar export uses `toISOString()` but emits date-time values without a UTC marker/timezone definition. Correct this and test the exported `.ics` file before treating calendar support as production-ready.
+Calendar export now includes the configured IANA timezone in `DTSTART` and `DTEND`; still test the generated `.ics` across Google Calendar, Apple Calendar, and Outlook before treating calendar support as production-ready.
