@@ -121,6 +121,23 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
               <path d="M 0,330 L 250,165 L 500,330 Z" fill="url(#pocketGradMobile)" stroke="#D3C7B3" strokeWidth="0.75" />
             </svg>
 
+            {/* Apply the same ivory paper texture to both side folds and the lower pocket. */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 z-[21] pointer-events-none opacity-70 mix-blend-multiply"
+              style={{ ...paperTextureStyle, clipPath: 'polygon(0 0, 50% 51.5%, 0 100%, 0 0)' }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 z-[21] pointer-events-none opacity-70 mix-blend-multiply"
+              style={{ ...paperTextureStyle, clipPath: 'polygon(100% 0, 100% 100%, 50% 51.5%)' }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 z-[21] pointer-events-none opacity-70 mix-blend-multiply"
+              style={{ ...paperTextureStyle, clipPath: 'polygon(0 100%, 50% 50%, 100% 100%)' }}
+            />
+
             <div
               className={`absolute top-0 left-0 right-0 h-[53%] origin-top transform-style-3d transition-transform duration-700 ease-in-out z-22 ${
                 isFlapOpen ? 'flap-open' : ''
