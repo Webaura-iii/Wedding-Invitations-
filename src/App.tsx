@@ -13,8 +13,6 @@ import { WeddingCountdown } from './components/WeddingCountdown';
 import { ClosingSection } from './components/ClosingSection';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { AudioAmbient } from './components/AudioAmbient';
-import { CustomizeModal } from './components/CustomizeModal';
-import { initialWeddingConfig } from './config/weddingConfig';
 import { Language, WeddingConfig } from './types/wedding';
 import { getInvitationSlug, loadPublishedInvitation } from './lib/invitations';
 
@@ -78,15 +76,6 @@ export default function App() {
     }
   }, [currentLanguage]);
 
-  const handleUpdateConfig = (newConfig: WeddingConfig) => {
-    setConfig(newConfig);
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newConfig));
-    } catch {
-      // Ignore storage errors
-    }
-  };
-
   const handleOpenComplete = () => {
     setIsOpened(true);
     // Smoothly scroll to the main card
@@ -128,6 +117,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F4] text-[#35332F] relative selection:bg-[#C9AE7A]/30">
+      {/* Ambient music starts on the visitor's first tap to open the invitation. */}
+      <AudioAmbient currentLanguage={currentLanguage} />
+
       {/* Drifting Rose Petals */}
       <PetalCanvas active={true} />
 
@@ -140,19 +132,10 @@ export default function App() {
             currentLanguage={currentLanguage}
             onLanguageChange={setCurrentLanguage}
             onOpenComplete={handleOpenComplete}
-            soundControl={<AudioAmbient currentLanguage={currentLanguage} />}
           />
         ) : (
           /* Opened Main Wedding Experience */
           <div className="relative min-h-screen flex flex-col items-center">
-            {/* Clean floating language selection (no nav bar) */}
-            <div className="fixed top-3 end-3 sm:top-4 sm:end-4 z-40 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-              <LanguageSwitcher
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-              />
-              <AudioAmbient currentLanguage={currentLanguage} />
-            </div>
 
             {/* Scrollable Content Stack */}
             <main className="w-full flex flex-col items-center pt-6 pb-12">
@@ -189,13 +172,11 @@ export default function App() {
         )}
       </CurtainBackground>
 
-      {/* Floating Customizer Modal for testing details */}
-      {!invitationSlug && (
-        <CustomizeModal
-          config={config}
-          onUpdateConfig={handleUpdateConfig}
-          currentLanguage={currentLanguage}
-        />
+      {/* Language selector stays fixed at the bottom of the invitation. */}
+      {isOpened && (
+        <div className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+          <LanguageSwitcher currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+        </div>
       )}
     </div>
   );
