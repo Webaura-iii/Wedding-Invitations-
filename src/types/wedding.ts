@@ -28,7 +28,8 @@ export interface WeddingConfig {
   bride: PersonDetails;
   nameOrder: NameOrder;
   initials: string; // Used for wax seal (e.g., "Z & A")
-  eventDateTimeISO: string; // For countdown & calendar (e.g., "2026-11-20T17:00:00")
+  eventDateTimeISO: string; // Event wall time or ISO timestamp for countdown & calendar
+  timeZone?: string; // IANA time zone, e.g. "Asia/Karachi"
   nikah: CeremonyEvent;
   dressCode?: LocalizedString;
   duaText?: LocalizedString;
