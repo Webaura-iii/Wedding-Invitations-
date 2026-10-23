@@ -17,11 +17,16 @@ import { AudioAmbient } from './components/AudioAmbient';
 import { CustomizeModal } from './components/CustomizeModal';
 import { initialWeddingConfig } from './config/weddingConfig';
 import { Language, WeddingConfig } from './types/wedding';
+import { getInvitationSlug, loadPublishedInvitation } from './lib/invitations';
 
 export default function App() {
+  const invitationSlug = getInvitationSlug();
+  const storageKey = invitationSlug ? `wedding_config_custom:${invitationSlug}` : 'wedding_config_custom';
+  const [isLoadingInvitation, setIsLoadingInvitation] = useState(Boolean(invitationSlug));
+  const [invitationError, setInvitationError] = useState<string | null>(null);
   const [config, setConfig] = useState<WeddingConfig>(() => {
     try {
-      const saved = localStorage.getItem('wedding_config_custom');
+      const saved = localStorage.getItem(storageKey);
       return saved ? JSON.parse(saved) : initialWeddingConfig;
     } catch {
       return initialWeddingConfig;
@@ -42,6 +47,26 @@ export default function App() {
 
   const [isOpened, setIsOpened] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!invitationSlug) return;
+    let cancelled = false;
+    setIsLoadingInvitation(true);
+    setInvitationError(null);
+    loadPublishedInvitation(invitationSlug)
+      .then((invitation) => {
+        if (!cancelled) setConfig(invitation);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setInvitationError(error instanceof Error ? error.message : 'This invitation could not be loaded.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingInvitation(false);
+      });
+    return () => { cancelled = true; };
+  }, [invitationSlug]);
+
   // Sync html dir and lang attributes
   useEffect(() => {
     const isRTL = currentLanguage === 'ur' || currentLanguage === 'ar';
@@ -57,7 +82,7 @@ export default function App() {
   const handleUpdateConfig = (newConfig: WeddingConfig) => {
     setConfig(newConfig);
     try {
-      localStorage.setItem('wedding_config_custom', JSON.stringify(newConfig));
+      localStorage.setItem(storageKey, JSON.stringify(newConfig));
     } catch {
       // Ignore storage errors
     }
@@ -83,6 +108,29 @@ export default function App() {
     config.nameOrder === 'groom_first'
       ? `${config.groom.name[currentLanguage]} & ${config.bride.name[currentLanguage]}`
       : `${config.bride.name[currentLanguage]} & ${config.groom.name[currentLanguage]}`;
+
+  if (invitationSlug && isLoadingInvitation) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[#FAF8F4] px-6 text-center">
+        <div className="max-w-md space-y-3">
+          <p className="font-playfair text-2xl text-[#35332F]">Your invitation awaits</p>
+          <p className="text-sm text-[#7D766A]" role="status">Preparing your invitation…</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (invitationSlug && invitationError) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[#FAF8F4] px-6 text-center">
+        <div className="max-w-md space-y-3">
+          <p className="font-playfair text-2xl text-[#35332F]">Invitation unavailable</p>
+          <p className="text-sm text-[#7D766A]" role="alert">{invitationError}</p>
+          <p className="text-xs text-[#A09686]">Please ask the couple for the correct invitation link.</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F4] text-[#35332F] relative selection:bg-[#C9AE7A]/30">
@@ -156,11 +204,13 @@ export default function App() {
       </CurtainBackground>
 
       {/* Floating Customizer Modal for testing details */}
-      <CustomizeModal
-        config={config}
-        onUpdateConfig={handleUpdateConfig}
-        currentLanguage={currentLanguage}
-      />
+      {!invitationSlug && (
+        <CustomizeModal
+          config={config}
+          onUpdateConfig={handleUpdateConfig}
+          currentLanguage={currentLanguage}
+        />
+      )}
     </div>
   );
 }
