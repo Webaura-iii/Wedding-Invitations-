@@ -34,7 +34,7 @@ export default function App() {
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
     try {
       const savedLang = localStorage.getItem('wedding_lang') as Language;
-      if (savedLang === 'en' || savedLang === 'ur' || savedLang === 'ar') return savedLang;
+      if (savedLang === 'en' || savedLang === 'ur') return savedLang;
     } catch {
       // default
     }
@@ -62,7 +62,7 @@ export default function App() {
   }, [invitationSlug]);
 
   useEffect(() => {
-    const isRTL = currentLanguage === 'ur' || currentLanguage === 'ar';
+    const isRTL = currentLanguage === 'ur';
     document.documentElement.lang = currentLanguage;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
     try {
