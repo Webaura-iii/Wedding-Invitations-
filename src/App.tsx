@@ -13,6 +13,7 @@ import { WeddingCountdown } from './components/WeddingCountdown';
 import { ClosingSection } from './components/ClosingSection';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { AudioAmbient } from './components/AudioAmbient';
+import { initialWeddingConfig } from './config/weddingConfig';
 import { Language, WeddingConfig } from './types/wedding';
 import { getInvitationSlug, loadPublishedInvitation } from './lib/invitations';
 
@@ -33,16 +34,14 @@ export default function App() {
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
     try {
       const savedLang = localStorage.getItem('wedding_lang') as Language;
-      if (savedLang === 'en' || savedLang === 'ur' || savedLang === 'ar') {
-        return savedLang;
-      }
+      if (savedLang === 'en' || savedLang === 'ur' || savedLang === 'ar') return savedLang;
     } catch {
       // default
     }
     return 'en';
   });
 
-  const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [isOpened, setIsOpened] = useState(false);
 
   useEffect(() => {
     if (!invitationSlug) return;
@@ -54,9 +53,7 @@ export default function App() {
         if (!cancelled) setConfig(invitation);
       })
       .catch((error: unknown) => {
-        if (!cancelled) {
-          setInvitationError(error instanceof Error ? error.message : 'This invitation could not be loaded.');
-        }
+        if (!cancelled) setInvitationError(error instanceof Error ? error.message : 'This invitation could not be loaded.');
       })
       .finally(() => {
         if (!cancelled) setIsLoadingInvitation(false);
@@ -64,7 +61,6 @@ export default function App() {
     return () => { cancelled = true; };
   }, [invitationSlug]);
 
-  // Sync html dir and lang attributes
   useEffect(() => {
     const isRTL = currentLanguage === 'ur' || currentLanguage === 'ar';
     document.documentElement.lang = currentLanguage;
@@ -78,12 +74,9 @@ export default function App() {
 
   const handleOpenComplete = () => {
     setIsOpened(true);
-    // Smoothly scroll to the main card
     setTimeout(() => {
       const cardEl = document.getElementById('invitation-card');
-      if (cardEl) {
-        cardEl.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (cardEl) cardEl.scrollIntoView({ behavior: 'smooth' });
     }, 150);
   };
 
@@ -117,16 +110,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F4] text-[#35332F] relative selection:bg-[#C9AE7A]/30">
-      {/* Ambient music starts on the visitor's first tap to open the invitation. */}
+      {/* Ambient sound is triggered by the visitor's wax-seal tap. */}
       <AudioAmbient currentLanguage={currentLanguage} />
-
-      {/* Drifting Rose Petals */}
       <PetalCanvas active={true} />
 
-      {/* Main Curtain and Floral Backdrop */}
       <CurtainBackground>
         {!isOpened ? (
-          /* Opening Scene: The Sealed Invitation Envelope */
           <EnvelopeOpening
             config={config}
             currentLanguage={currentLanguage}
@@ -134,50 +123,28 @@ export default function App() {
             onOpenComplete={handleOpenComplete}
           />
         ) : (
-          /* Opened Main Wedding Experience */
           <div className="relative min-h-screen flex flex-col items-center">
-
-            {/* Scrollable Content Stack */}
-            <main className="w-full flex flex-col items-center pt-6 pb-12">
-              {/* Main Stationery Card (includes the save-the-date calendar at its bottom) */}
+            <main className="w-full flex flex-col items-center pt-6 pb-24">
               <div id="invitation-card" className="w-full pt-4">
-                <InvitationCard
-                  config={config}
-                  currentLanguage={currentLanguage}
-                />
+                <InvitationCard config={config} currentLanguage={currentLanguage} />
               </div>
 
-              {/* Countdown Timer */}
-              <WeddingCountdown
-                targetDateISO={config.eventDateTimeISO}
-                currentLanguage={currentLanguage}
-              />
+              <WeddingCountdown targetDateISO={config.eventDateTimeISO} currentLanguage={currentLanguage} />
 
-              {/* Ceremony & Reception Details */}
               <div id="wedding-details" className="w-full">
-                <WeddingDetails
-                  config={config}
-                  currentLanguage={currentLanguage}
-                />
+                <WeddingDetails config={config} currentLanguage={currentLanguage} />
               </div>
 
-              {/* Closing Section with Sunnah Barakah Dua */}
-              <ClosingSection
-                config={config}
-                currentLanguage={currentLanguage}
-                onReseal={handleReseal}
-              />
+              <ClosingSection config={config} currentLanguage={currentLanguage} onReseal={handleReseal} />
             </main>
           </div>
         )}
       </CurtainBackground>
 
-      {/* Language selector stays fixed at the bottom of the invitation. */}
-      {isOpened && (
-        <div className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
-          <LanguageSwitcher currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
-        </div>
-      )}
+      {/* Language selector remains accessible at the bottom of both opening and invitation screens. */}
+      <div className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+        <LanguageSwitcher currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />
+      </div>
     </div>
   );
 }
