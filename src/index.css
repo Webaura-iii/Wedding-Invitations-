@@ -160,3 +160,65 @@
 @media (prefers-reduced-motion: reduce) {
   .wax-seal-right-half { animation-duration: 1ms !important; }
 }
+
+
+/* Supplied rose-border.webp: decorative mirrored edge florals, below the invitation UI. */
+.floral-border {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: clamp(20vw, 23vw, 25vw);
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.92;
+  animation: floralSway 7s ease-in-out infinite;
+}
+.floral-border img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  -webkit-mask-image: linear-gradient(to left, #000 62%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 62%, transparent 100%);
+}
+.floral-border-right { right: 0; }
+.floral-border-left { left: 0; transform: scaleX(-1); }
+@keyframes floralSway {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+/* Supplied wax-seal.png is already background-transparent; keep it whole throughout. */
+.wax-seal-trigger {
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+  transition: transform 260ms ease, filter 260ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.wax-seal-trigger:hover,
+.wax-seal-trigger.wax-seal-hovered {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 8px rgba(174,132,43,0.48)) drop-shadow(0 0 10px rgba(212,175,55,0.2));
+}
+.wax-seal-image { user-select: none; }
+
+@media (max-width: 640px) {
+  .floral-border {
+    width: 39vw;
+    opacity: 0.85;
+  }
+  .floral-border img {
+    width: 118%;
+    max-width: none;
+  }
+  .floral-border-right img { transform: translateX(12%); }
+  .floral-border-left img { transform: translateX(12%); }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .floral-border { width: 28vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floral-border { animation: none !important; }
+  .wax-seal-trigger { transition: none !important; }
+}
