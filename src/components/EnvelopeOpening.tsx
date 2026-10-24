@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ivoryPaperTexture from '../assets/images/ivory_paper_texture_1792745988701.jpg';
 import { WaxSeal } from './WaxSeal';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { BokehLights } from './BokehLights';
@@ -45,9 +44,9 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
   const isCardSliding = animationStage === 'slidingCard' || animationStage === 'opened';
 
   const paperTextureStyle: React.CSSProperties = {
-    backgroundImage: `url("${ivoryPaperTexture}")`,
+    backgroundImage: 'url("/assets/images/paper-texture.webp")',
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundPosition: 'center top',
   };
 
   return (
