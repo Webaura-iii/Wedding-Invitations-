@@ -65,6 +65,14 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
         <div className="absolute inset-0 bg-radial-[circle_at_center] from-[#FAF8F4]/80 via-[#F7F2E8]/85 to-[#EFE7D8]/95" />
       </div>
 
+      {/* Decorative asset: /assets/images/rose-border.webp. Mirrored on the left; never intercepts clicks. */}
+      <div className="floral-border floral-border-left" aria-hidden="true">
+        <img src="/assets/images/rose-border.webp" alt="" loading="lazy" />
+      </div>
+      <div className="floral-border floral-border-right" aria-hidden="true">
+        <img src="/assets/images/rose-border.webp" alt="" loading="lazy" />
+      </div>
+
       <BokehLights />
 
       <main className="absolute inset-0 z-20 flex flex-col items-center justify-center w-full h-full max-w-none mx-auto">
@@ -220,20 +228,17 @@ export const EnvelopeOpening: React.FC<EnvelopeOpeningProps> = ({
                   background: 'linear-gradient(to bottom, #F4ECE0, #E7DCCB)',
                 }}
               />
+              {/* Seal is a child of the flap so it rides with the flap, intact and visible. */}
+              <div className="absolute left-1/2 top-[66%] -translate-x-1/2 -translate-y-1/2 z-40">
+                <WaxSeal
+                  onClick={handleOpenEnvelope}
+                  disabled={animationStage !== 'sealed'}
+                  label={t.tapToOpen}
+                />
+              </div>
             </div>
 
-            <div
-              className={`absolute top-[53%] left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 z-30 ${
-                isFlapOpen ? 'opacity-0 scale-75 pointer-events-none' : 'opacity-100'
-              }`}
-            >
-              <WaxSeal
-                onClick={handleOpenEnvelope}
-                disabled={animationStage !== 'sealed'}
-                label={t.tapToOpen}
-                cracked={animationStage === 'cracking'}
-              />
-            </div>
+
           </div>
         </div>
 
