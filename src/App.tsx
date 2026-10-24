@@ -6,7 +6,6 @@
 import React, { useEffect, useState } from 'react';
 import { CurtainBackground } from './components/CurtainBackground';
 import { PetalCanvas } from './components/PetalCanvas';
-import { EnvelopeOpening } from './components/EnvelopeOpening';
 import { InvitationCard } from './components/InvitationCard';
 import { WeddingDetails } from './components/WeddingDetails';
 import { WeddingCountdown } from './components/WeddingCountdown';
@@ -41,7 +40,8 @@ export default function App() {
     return 'en';
   });
 
-  const [isOpened, setIsOpened] = useState(false);
+  // Start directly on the invitation; the envelope-opening screen is intentionally bypassed.
+  const [isOpened, setIsOpened] = useState(true);
 
   useEffect(() => {
     if (!invitationSlug) return;
@@ -81,7 +81,7 @@ export default function App() {
   };
 
   const handleReseal = () => {
-    setIsOpened(false);
+    // Envelope/reseal interaction removed; keep the page at the invitation instead.
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
